@@ -5,6 +5,8 @@ description = "Semantic search tool for websites using RAG"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "chromadb>=1.5.9",
+    "sentence-transformers>=5.5.1",
     "trafilatura>=2.0",
 ]
 
@@ -39,4 +41,5 @@ testpaths = ["tests"]
 pythonpath = ["."]
 filterwarnings = [
     "ignore::DeprecationWarning:tld",
+    "ignore::DeprecationWarning:chromadb",
 ]
