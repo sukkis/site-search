@@ -43,3 +43,6 @@ filterwarnings = [
     "ignore::DeprecationWarning:tld",
     "ignore::DeprecationWarning:chromadb",
 ]
+markers = [
+    "local_only: test requires a gitignored fixture (copyrighted material) — skipped in CI",
+]

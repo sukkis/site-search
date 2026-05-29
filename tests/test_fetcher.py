@@ -71,6 +71,7 @@ def test_fetch_urls_skips_url_when_fetch_returns_none(tmp_path: Path) -> None:
     assert list(tmp_path.iterdir()) == []
 
 
+@pytest.mark.local_only
 def test_fetch_urls_writes_one_cache_file_per_url(
     tmp_path: Path, test_html: str
 ) -> None:
@@ -86,6 +87,7 @@ def test_fetch_urls_writes_one_cache_file_per_url(
 # --- _extract_and_write ---
 
 
+@pytest.mark.local_only
 def test_extract_and_write_produces_correct_json_fields(
     tmp_path: Path, test_html: str
 ) -> None:
