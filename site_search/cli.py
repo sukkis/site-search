@@ -17,6 +17,7 @@ def cli() -> None:
 @cli.command()
 @click.argument("urls_file", type=click.Path(exists=True, path_type=Path))
 def fetch(urls_file: Path) -> None:
+    """Download and cache pages from a list of URLs."""
     config = load_config()
     urls = urls_file.read_text().splitlines()
     fetch_urls(urls, config.storage.cache_dir)
@@ -24,6 +25,7 @@ def fetch(urls_file: Path) -> None:
 
 @cli.command()
 def index() -> None:
+    """Embed cached pages and store them in the vector index."""
     config = load_config()
     index_cache(
         config.storage.cache_dir,
@@ -35,6 +37,7 @@ def index() -> None:
 @cli.command()
 @click.argument("question")
 def query(question: str) -> None:
+    """Ask a plain-language question about the indexed pages."""
     config = load_config()
     chunks = retrieve(
         question,
