@@ -1997,9 +1997,10 @@ wheels = [
 [[package]]
 name = "site-search"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "chromadb" },
+    { name = "click" },
     { name = "httpx" },
     { name = "sentence-transformers" },
     { name = "trafilatura" },
@@ -2015,6 +2016,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "chromadb", specifier = ">=1.5.9" },
+    { name = "click", specifier = ">=8.4.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "sentence-transformers", specifier = ">=5.5.1" },
     { name = "trafilatura", specifier = ">=2.0" },

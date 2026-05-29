@@ -36,9 +36,9 @@ def _make_chunk_rows(record: dict[str, Any]) -> list[dict[str, Any]]:
     url = record.get("url", "")
     metadata = {
         "url": url,
-        "title": record.get("title"),
-        "author": record.get("author"),
-        "date_published": record.get("date_published"),
+        "title": record.get("title") or "",
+        "author": record.get("author") or "",
+        "date_published": record.get("date_published") or "",
     }
     return [
         {

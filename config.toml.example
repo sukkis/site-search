@@ -1,0 +1,17 @@
+[storage]
+cache_dir = "./cache"
+chroma_dir = "./chroma_db"
+
+[embedding]
+model = "multi-qa-MiniLM-L6-cos-v1"
+
+[retrieval]
+top_k = 5
+
+[chunking]
+target_size = 800
+max_size = 1200
+
+[ollama]
+base_url = "http://localhost:11434"
+model = "mistral-nemo:latest"

@@ -22,7 +22,12 @@ This is called RAG (Retrieval-Augmented Generation). The key property is that th
 uv sync
 ```
 
-This installs all dependencies into a local virtualenv. The `site-search` command is then available via `uv run site-search`.
+This installs all dependencies into a local virtualenv. Activate it once and the `site-search` command is available directly:
+
+```bash
+source .venv/bin/activate
+site-search --help
+```
 
 ## Configuration
 
@@ -50,7 +55,7 @@ base_url = "http://localhost:11434"
 model = "mistral-nemo:latest"
 ```
 
-`config.toml` must be present in the directory where you run the commands.
+If no `config.toml` is present, the defaults above are used automatically. Copy `config.toml.example` to `config.toml` only if you want to change any values.
 
 ## Usage
 
@@ -61,7 +66,7 @@ Site search has three commands that form a pipeline. Run them in order.
 Download pages and cache their text to disk:
 
 ```bash
-uv run site-search fetch urls.txt
+site-search fetch urls.txt
 ```
 
 `urls.txt` is a plain text file with one URL per line:
@@ -79,7 +84,7 @@ Already-cached pages are skipped — safe to re-run after adding new URLs.
 Chunk the cached text, embed it, and store it in the vector database:
 
 ```bash
-uv run site-search index
+site-search index
 ```
 
 Re-running after adding new cached pages adds only the new content.
@@ -89,7 +94,7 @@ Re-running after adding new cached pages adds only the new content.
 Ask a question in plain language:
 
 ```bash
-uv run site-search query "Which countries are affected by the trade dispute?"
+site-search query "Which countries are affected by the trade dispute?"
 ```
 
 The answer will be printed to the terminal, grounded in the indexed pages.
@@ -104,14 +109,14 @@ https://www.bbc.com/news/articles/trade-talks-update
 EOF
 
 # Fetch and cache the pages
-uv run site-search fetch urls.txt
+site-search fetch urls.txt
 
 # Build the vector index
-uv run site-search index
+site-search index
 
 # Ask questions
-uv run site-search query "What did the Kenyan court decide?"
-uv run site-search query "Which industries are most affected by the trade talks?"
+site-search query "What did the Kenyan court decide?"
+site-search query "Which industries are most affected by the trade talks?"
 ```
 
 ## Notes

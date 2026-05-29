@@ -38,3 +38,7 @@ coverage.xml
 # Project
 project_idea.md
 tests/fixtures/
+config.toml
+urls.txt
+cache/
+chroma_db/

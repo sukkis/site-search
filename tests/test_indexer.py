@@ -70,6 +70,23 @@ def test_make_chunk_rows_ids_are_unique(
     assert len(ids) == len(set(ids))
 
 
+def test_make_chunk_rows_replaces_none_metadata_with_empty_string() -> None:
+    record = {
+        "url": "https://example.com/article",
+        "title": None,
+        "author": None,
+        "date_published": None,
+        "text": "A" * 500,
+        "fetched_at": "2026-05-29T12:00:00+00:00",
+    }
+    rows = _make_chunk_rows(record)
+    assert len(rows) == 1
+    meta = rows[0]["metadata"]
+    assert meta["title"] == ""
+    assert meta["author"] == ""
+    assert meta["date_published"] == ""
+
+
 def test_make_chunk_rows_returns_empty_list_when_text_is_missing() -> None:
     record = {
         "url": "https://example.com/article",
