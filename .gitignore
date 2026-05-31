@@ -42,3 +42,4 @@ config.toml
 urls.txt
 cache/
 chroma_db/
+scripts/
