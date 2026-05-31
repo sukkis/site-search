@@ -10,11 +10,19 @@ When you ask a question, the question is converted into a vector the same way. T
 
 This is called RAG (Retrieval-Augmented Generation). The key property is that the model answers from the passages you provide, not from its training data. If a fact is not on the pages you indexed, the model will say so rather than guess.
 
+## Features
+
+- **Fully local** — embedding, retrieval, and generation all run on your machine; no data is sent to any external service
+- **Incremental** — fetch and index are idempotent; re-running after adding new URLs processes only the new content
+- **Configurable** — embedding model, retrieval depth, chunking parameters, and Ollama model are all tunable via `config.toml`
+- **Observable** — every query is traced end-to-end with [Langfuse](https://langfuse.com), capturing the question, retrieved context, generated answer, and token usage
+
 ## Prerequisites
 
 - [Ollama](https://ollama.com) installed and running locally
 - The `mistral-nemo` model pulled: `ollama pull mistral-nemo`
 - Python 3.14+ and [uv](https://docs.astral.sh/uv/)
+- [Langfuse](https://langfuse.com/docs/deployment/self-host) running locally (for observability)
 
 ## Installation
 
@@ -94,10 +102,21 @@ Re-running after adding new cached pages adds only the new content.
 Ask a question in plain language:
 
 ```bash
-site-search query "Which countries are affected by the trade dispute?"
+just query "Which countries are affected by the trade dispute?"
 ```
 
-The answer will be printed to the terminal, grounded in the indexed pages.
+The answer will be printed to the terminal, grounded in the indexed pages. The `just query` wrapper injects Langfuse credentials so every query is traced automatically.
+
+## Observability
+
+Every `just query` run produces a trace in the Langfuse UI:
+
+- **`site-search-query`** — the full request, with the question as input and the final answer as output
+- **`ollama-generate`** — the LLM call, with the full prompt, model name, answer, and token counts (input tokens from `prompt_eval_count`, output tokens from `eval_count` in the Ollama response)
+
+To view traces, open your local Langfuse instance (default: `http://localhost:3000`).
+
+Langfuse credentials are not stored in the repository. See the developer notes in `ARCHITECTURE.md` for the credential injection pattern.
 
 ## Example session
 
@@ -115,12 +134,12 @@ site-search fetch urls.txt
 site-search index
 
 # Ask questions
-site-search query "What did the Kenyan court decide?"
-site-search query "Which industries are most affected by the trade talks?"
+just query "What did the Kenyan court decide?"
+just query "Which industries are most affected by the trade talks?"
 ```
 
 ## Notes
 
 - The embedding model (`config.toml → embedding.model`) must be the same when indexing and querying. Changing it requires re-running `index`.
 - Cached pages (`cache/`) and the vector index (`chroma_db/`) are stored locally and not tracked by git.
-- All processing — embedding and generation — runs on your machine. No data is sent to any external service.
+- All processing — embedding, generation, and tracing — runs on your machine. No data is sent to any external service.
