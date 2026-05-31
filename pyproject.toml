@@ -8,6 +8,7 @@ dependencies = [
     "chromadb>=1.5.9",
     "click>=8.4.1",
     "httpx>=0.28.1",
+    "langfuse>=4.7.1",
     "sentence-transformers>=5.5.1",
     "trafilatura>=2.0",
 ]
@@ -24,6 +25,9 @@ dev = [
 
 [tool.uv]
 package = true
+
+[tool.setuptools.packages.find]
+include = ["site_search*"]
 
 [tool.ruff]
 line-length = 88

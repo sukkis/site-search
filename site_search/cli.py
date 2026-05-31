@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import click
+from langfuse import get_client
 
 from site_search.config import load_config
 from site_search.fetcher import fetch_urls
@@ -39,11 +40,19 @@ def index() -> None:
 def query(question: str) -> None:
     """Ask a plain-language question about the indexed pages."""
     config = load_config()
-    chunks = retrieve(
-        question,
-        config.storage.chroma_dir,
-        config.embedding.model,
-        config.retrieval.top_k,
-    )
-    answer = generate(question, chunks, config.ollama.base_url, config.ollama.model)
+    langfuse = get_client()
+    with langfuse.start_as_current_observation(
+        as_type="span",
+        name="site-search-query",
+        input=question,
+    ) as trace:
+        chunks = retrieve(
+            question,
+            config.storage.chroma_dir,
+            config.embedding.model,
+            config.retrieval.top_k,
+        )
+        answer = generate(question, chunks, config.ollama.base_url, config.ollama.model)
+        trace.update(output=answer)
+    langfuse.flush()
     click.echo(answer)

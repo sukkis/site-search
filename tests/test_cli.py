@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from click.testing import CliRunner
@@ -105,3 +105,61 @@ def test_query_command_passes_chunks_to_generate(fake_config: Config) -> None:
     ):
         runner.invoke(cli, ["query", "What happened?"])
     assert mock_gen.call_args[0][1] == fake_chunks
+
+
+# --- Langfuse tracing ---
+
+
+def _make_langfuse_mock() -> tuple[MagicMock, MagicMock]:
+    mock_obs = MagicMock()
+    mock_obs.__enter__ = MagicMock(return_value=mock_obs)
+    mock_obs.__exit__ = MagicMock(return_value=False)
+    mock_client = MagicMock()
+    mock_client.start_as_current_observation.return_value = mock_obs
+    return mock_client, mock_obs
+
+
+def test_query_command_flushes_langfuse(fake_config: Config) -> None:
+    mock_client, _ = _make_langfuse_mock()
+    runner = CliRunner()
+    with (
+        patch("site_search.cli.load_config", return_value=fake_config),
+        patch("site_search.cli.retrieve", return_value=[]),
+        patch("site_search.cli.generate", return_value="ok"),
+        patch("site_search.cli.get_client", return_value=mock_client),
+    ):
+        result = runner.invoke(cli, ["query", "What happened?"])
+    assert result.exit_code == 0
+    mock_client.flush.assert_called_once()
+
+
+def test_query_command_wraps_in_trace_with_question_as_input(
+    fake_config: Config,
+) -> None:
+    mock_client, mock_obs = _make_langfuse_mock()
+    runner = CliRunner()
+    with (
+        patch("site_search.cli.load_config", return_value=fake_config),
+        patch("site_search.cli.retrieve", return_value=[]),
+        patch("site_search.cli.generate", return_value="The answer."),
+        patch("site_search.cli.get_client", return_value=mock_client),
+    ):
+        runner.invoke(cli, ["query", "What happened?"])
+    mock_client.start_as_current_observation.assert_called_once()
+    _, kwargs = mock_client.start_as_current_observation.call_args
+    assert kwargs.get("input") == "What happened?"
+
+
+def test_query_command_sets_answer_as_trace_output(fake_config: Config) -> None:
+    mock_client, mock_obs = _make_langfuse_mock()
+    runner = CliRunner()
+    with (
+        patch("site_search.cli.load_config", return_value=fake_config),
+        patch("site_search.cli.retrieve", return_value=[]),
+        patch("site_search.cli.generate", return_value="The answer."),
+        patch("site_search.cli.get_client", return_value=mock_client),
+    ):
+        runner.invoke(cli, ["query", "What happened?"])
+    update_calls = mock_obs.update.call_args_list
+    outputs = [c.kwargs.get("output") for c in update_calls if "output" in c.kwargs]
+    assert "The answer." in outputs
