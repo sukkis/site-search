@@ -31,8 +31,8 @@ def retrieve(
 
     documents = results["documents"]
     metadatas = results["metadatas"]
-    assert documents is not None
-    assert metadatas is not None
+    if documents is None or metadatas is None:
+        raise RuntimeError("ChromaDB returned None for documents or metadatas")
     return [
         {"chunk": doc, "metadata": dict(meta)}
         for doc, meta in zip(documents[0], metadatas[0])

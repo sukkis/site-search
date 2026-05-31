@@ -145,20 +145,8 @@ site-search/
     └── test_generator.py
 ```
 
-`cache/`, `chroma_db/`, and `tests/fixtures/` are excluded from version control via `.gitignore`. The test fixture is a real news article HTML file kept locally; a synthetic copyright-free replacement is planned.
+`cache/`, `chroma_db/`, and `tests/fixtures/` are excluded from version control via `.gitignore`. The test fixture is a real news article HTML file kept locally and not committed due to copyright.
 
 ## Observability
 
-LangFuse is included in the MVP scope for tracing individual pipeline runs: what chunks were retrieved, what prompt was sent, what the LLM returned, and latency at each step. It runs locally via Docker and no trace data leaves the machine. LangFuse integration is added after the core pipeline is working end-to-end.
-
-## Implementation Order
-
-The modules are built in this order, each with tests written first (TDD):
-
-1. `chunker.py` — pure function, no dependencies, easiest to test
-2. `fetcher.py` — introduces trafilatura and disk I/O
-3. `indexer.py` — introduces sentence-transformers and ChromaDB
-4. `retriever.py` — queries ChromaDB
-5. `generator.py` — introduces httpx and Ollama
-6. `cli.py` — wires the commands together with click
-7. LangFuse — wraps the pipeline with observability traces
+Not yet implemented. LangFuse is the planned tool for tracing pipeline runs (retrieved chunks, prompt sent, LLM response, latency). It would run locally via Docker with no data leaving the machine.

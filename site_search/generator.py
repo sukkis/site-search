@@ -21,5 +21,6 @@ def generate(
     response = httpx.post(
         f"{base_url}/api/generate",
         json={"model": model, "prompt": prompt, "stream": False},
+        timeout=120.0,
     )
     return str(response.json()["response"])

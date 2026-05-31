@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 import chromadb
@@ -16,7 +17,7 @@ FAKE_EMBEDDING_DIM = 384
 
 
 @pytest.fixture
-def sample_record() -> dict:  # type: ignore[type-arg]
+def sample_record() -> dict[str, Any]:
     return {
         "url": "https://example.com/article",
         "title": "Test Article",
@@ -45,14 +46,14 @@ def test_load_records_returns_empty_list_for_empty_directory(tmp_path: Path) -> 
 
 
 def test_make_chunk_rows_returns_one_row_per_chunk(
-    sample_record: dict,  # type: ignore[type-arg]
+    sample_record: dict[str, Any],
 ) -> None:
     rows = _make_chunk_rows(sample_record)
     assert len(rows) == 2  # two 500-char paragraphs exceed target_size=800
 
 
 def test_make_chunk_rows_metadata_contains_article_fields(
-    sample_record: dict,  # type: ignore[type-arg]
+    sample_record: dict[str, Any],
 ) -> None:
     rows = _make_chunk_rows(sample_record)
     for row in rows:
@@ -63,7 +64,7 @@ def test_make_chunk_rows_metadata_contains_article_fields(
 
 
 def test_make_chunk_rows_ids_are_unique(
-    sample_record: dict,  # type: ignore[type-arg]
+    sample_record: dict[str, Any],
 ) -> None:
     rows = _make_chunk_rows(sample_record)
     ids = [row["id"] for row in rows]
@@ -129,7 +130,7 @@ def test_upsert_is_idempotent(tmp_path: Path) -> None:
 
 def test_index_cache_populates_collection(
     tmp_path: Path,
-    sample_record: dict,  # type: ignore[type-arg]
+    sample_record: dict[str, Any],
 ) -> None:
     cache_dir = tmp_path / "cache"
     cache_dir.mkdir()

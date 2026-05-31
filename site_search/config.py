@@ -1,6 +1,7 @@
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 _DEFAULTS = {
     "storage": {"cache_dir": "./cache", "chroma_dir": "./chroma_db"},
@@ -48,7 +49,7 @@ class Config:
     ollama: OllamaConfig
 
 
-def _build(data: dict) -> Config:  # type: ignore[type-arg]
+def _build(data: dict[str, Any]) -> Config:
     s = data["storage"]
     e = data["embedding"]
     r = data["retrieval"]

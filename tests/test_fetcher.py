@@ -15,7 +15,9 @@ from site_search.fetcher import (
 
 @pytest.fixture(scope="session")
 def test_html() -> str:
-    return Path("tests/fixtures/bbc_article.html").read_text(encoding="utf-8")
+    return (Path(__file__).parent / "fixtures" / "bbc_article.html").read_text(
+        encoding="utf-8"
+    )
 
 
 # --- url_to_slug ---
