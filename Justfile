@@ -9,3 +9,6 @@ ci: check
     uv run pytest -m "not local_only"
 
 all: check test
+
+query *ARGS:
+    scripts/query "{{ARGS}}"
